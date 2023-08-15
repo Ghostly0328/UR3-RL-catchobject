@@ -43,6 +43,7 @@ public class UR3 : Agent
 
     public override void OnEpisodeBegin()
     {
+        Debug.Log("Start !");
         // Get MaxStep
         maxStep = MaxStep;
         // Reset CurrentStep
@@ -101,6 +102,7 @@ public class UR3 : Agent
             //Debug.Log(transformList[i].localRotation.eulerAngles);
             sensor.AddObservation(transformList[i].localRotation.eulerAngles);
         }
+        sensor.AddObservation(getGameObject.transform.position);
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -113,11 +115,11 @@ public class UR3 : Agent
         float score = CalculateScore(distance);
         AddReward(score);
 
-        if (distance < 0.02f)
-        {
-            Debug.Log("Finish !");
-            Terminal();
-        }
+        // if (distance < 0.02f)
+        // {
+        //     Debug.Log("Finish !");
+        //     Terminal();
+        // }
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -190,7 +192,7 @@ public class UR3 : Agent
     private void MoveUR3AllControl(ActionBuffers actions)
     {
         RobotController robotController = UR3GameObject.GetComponent<RobotController>();
-        for (int i = 0; i < actions.DiscreteActions.Length; i++)
+        for (int i = 0; i < 5; i++)
         {
             if (actions.DiscreteActions[i] == 0)
             {
@@ -203,6 +205,22 @@ public class UR3 : Agent
             else if (actions.DiscreteActions[i] == 2)
             {
                 robotController.RotateJoint(i, RotationDirection.Negative);
+            }
+        }
+
+        //夾取動作
+        if (actions.DiscreteActions[6] == 0)
+        {
+            float distance = Vector3.Distance(termainal.position, getGameObject.transform.position);
+            if (distance < 0.02f)
+            {
+                Debug.Log("Finish !");
+                Terminal();
+            }
+            else
+            {
+                float score = CalculateScore(distance);
+                AddReward(10 * score);
             }
         }
     }

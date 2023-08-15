@@ -12,7 +12,7 @@ public class TargetCollider : MonoBehaviour
         if (OnColSwitchOn)
         {
             Debug.Log("UR3 Hit Target");
-            brain.AddReward(-1f);
+            brain.AddReward(-0.01f);
         }
     }
 }
